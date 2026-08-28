@@ -37,7 +37,24 @@ const metingTrackSchema = z.object({
   url: httpsUrl,
 });
 
-const metingPlaylistSchema = z.array(metingTrackSchema).min(1).max(500);
+// Meting 服务存在两种字段约定：title/author/pic（如 i-meto）与 name/artist/cover（标准 Meting）。
+// 这里统一归一化为 title/author/pic 后再交给 schema 校验。
+function normalizeMetingTrack(raw: unknown) {
+  if (typeof raw !== 'object' || raw === null) return raw;
+  const item = raw as Record<string, unknown>;
+  return {
+    author: item.author ?? item.artist,
+    lrc: item.lrc,
+    pic: item.pic ?? item.cover,
+    title: item.title ?? item.name,
+    url: item.url,
+  };
+}
+
+const metingPlaylistSchema = z
+  .array(z.preprocess(normalizeMetingTrack, metingTrackSchema))
+  .min(1)
+  .max(500);
 
 function providerUrl(template: string, config: z.infer<typeof musicConfigSchema>['meting']) {
   const replacements: Record<string, string> = {
