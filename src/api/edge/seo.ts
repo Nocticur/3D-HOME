@@ -11,7 +11,8 @@ function escapeXml(value: string) {
 }
 
 function getOrigin(request: Request) {
-  return new URL(request.url).origin;
+  void request;
+  return new URL(siteConfig.siteUrl).origin;
 }
 
 function textResponse(source: string, contentType: string) {
@@ -24,6 +25,9 @@ function textResponse(source: string, contentType: string) {
 }
 
 export function handleRobotsGet(context: EdgeContext) {
+  if (context.env.VERCEL_ENV === 'preview') {
+    return textResponse('User-agent: *\nDisallow: /\n', 'text/plain; charset=UTF-8');
+  }
   const sitemapUrl = `${getOrigin(context.request)}/sitemap.xml`;
   return textResponse(
     `User-agent: *\nAllow: /\nSitemap: ${sitemapUrl}\n`,

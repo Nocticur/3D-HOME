@@ -1,5 +1,14 @@
 [
   {
+    "defaultFetch": true,
+    "enabled": true,
+    "feedUrl": "https://blog.mourn.top/rss.xml",
+    "id": "nocticur-blog",
+    "name": "Nocticur 的博客",
+    "siteUrl": "https://blog.mourn.top",
+    "tags": ["博客", "个人"]
+  },
+  {
     "defaultFetch": false,
     "enabled": true,
     "feedUrl": "https://2x.nz/rss.xml",
@@ -144,7 +153,7 @@
     "tags": ["博客"]
   },
   {
-    "defaultFetch": true,
+    "defaultFetch": false,
     "enabled": true,
     "feedUrl": "https://api.ragnote.top/rss.xml",
     "id": "ragnote",
@@ -177,15 +186,6 @@
     "id": "shijiucode",
     "name": "拾玖的博客",
     "siteUrl": "https://shijiucode.cn",
-    "tags": ["博客"]
-  },
-  {
-    "defaultFetch": true,
-    "enabled": true,
-    "feedUrl": "https://tblog.mmzhiku.xyz/rss.xml",
-    "id": "mmzhiku-blog",
-    "name": "mmzhiku的博客",
-    "siteUrl": "https://tblog.mmzhiku.xyz",
     "tags": ["博客"]
   }
 ]

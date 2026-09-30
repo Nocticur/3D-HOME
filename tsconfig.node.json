@@ -18,6 +18,7 @@
   "include": [
     "vite.config.ts",
     "eslint.config.js",
+    "api/**/*.ts",
     "edge-functions/**/*.ts",
     "src/api/edge/**/*.ts",
     "src/config/*.json"

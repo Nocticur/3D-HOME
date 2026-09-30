@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export interface EdgeContext {
   env: Record<string, string | undefined>;
+  geo?: EdgeGeo | null;
   request: Request;
   waitUntil: (promise: Promise<unknown>) => void;
 }
@@ -15,10 +16,16 @@ export interface EdgeGeo {
 
 interface EdgeCache {
   match(request: Request): Promise<Response | undefined>;
-  put(request: Request, response: Response): Promise<void>;
+  put(request: Request, response: Response, ttlSeconds?: number): Promise<void>;
 }
 
-const localCache = new Map<string, Response>();
+interface LocalCacheEntry {
+  expiresAt: number;
+  response: Response;
+}
+
+const localCache = new Map<string, LocalCacheEntry>();
+const maxLocalCacheEntries = 128;
 
 const edgeRequestSchema = z.object({
   eo: z
@@ -35,11 +42,30 @@ const edgeRequestSchema = z.object({
     .optional(),
 });
 
-export function getEdgeGeo(request: Request): EdgeGeo | null {
+export function getEdgeGeo(request: Request, platformGeo?: EdgeGeo | null): EdgeGeo | null {
+  const geo = platformGeo ?? getRequestGeo(request);
+  if (geo === null) return null;
+  const { latitude, longitude } = geo;
+
+  if (
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude) ||
+    latitude < -90 ||
+    latitude > 90 ||
+    longitude < -180 ||
+    longitude > 180
+  ) {
+    return null;
+  }
+
+  return { city: geo.city, latitude, longitude, region: geo.region };
+}
+
+function getRequestGeo(request: Request): EdgeGeo | null {
   const parsed = edgeRequestSchema.safeParse(request);
-  const geo = parsed.success ? parsed.data.eo?.geo : undefined;
-  const latitude = geo?.latitude;
-  const longitude = geo?.longitude;
+  const source = parsed.success ? parsed.data.eo?.geo : undefined;
+  const latitude = source?.latitude;
+  const longitude = source?.longitude;
 
   if (
     latitude === undefined ||
@@ -52,7 +78,14 @@ export function getEdgeGeo(request: Request): EdgeGeo | null {
     return null;
   }
 
-  return { city: geo?.city, latitude, longitude, region: geo?.region };
+  return { city: source?.city, latitude, longitude, region: source?.region };
+}
+
+function responseCacheTtl(response: Response) {
+  const cacheControl = response.headers.get('cache-control') ?? '';
+  const maxAge = /(?:^|,)\s*s-maxage=(\d+)/i.exec(cacheControl)?.[1];
+  const fallback = /(?:^|,)\s*max-age=(\d+)/i.exec(cacheControl)?.[1];
+  return Math.max(0, Number(maxAge ?? fallback ?? 60));
 }
 
 export function getEdgeCache(): EdgeCache {
@@ -61,10 +94,29 @@ export function getEdgeCache(): EdgeCache {
 
   return {
     match(request) {
-      return Promise.resolve(localCache.get(request.url)?.clone());
+      const entry = localCache.get(request.url);
+      if (entry === undefined) return Promise.resolve(undefined);
+      if (entry.expiresAt <= Date.now()) {
+        localCache.delete(request.url);
+        return Promise.resolve(undefined);
+      }
+      localCache.delete(request.url);
+      localCache.set(request.url, entry);
+      return Promise.resolve(entry.response.clone());
     },
-    put(request, response) {
-      localCache.set(request.url, response.clone());
+    put(request, response, ttlSeconds) {
+      const ttl = ttlSeconds ?? responseCacheTtl(response);
+      if (ttl <= 0) return Promise.resolve();
+      localCache.delete(request.url);
+      localCache.set(request.url, {
+        expiresAt: Date.now() + ttl * 1_000,
+        response: response.clone(),
+      });
+      while (localCache.size > maxLocalCacheEntries) {
+        const oldestKey = localCache.keys().next();
+        if (oldestKey.done) break;
+        localCache.delete(oldestKey.value);
+      }
       return Promise.resolve();
     },
   };
@@ -106,13 +158,57 @@ export function failure(
   });
 }
 
-export async function fetchWithTimeout(url: URL, init: RequestInit, timeoutMs: number) {
+export async function fetchWithTimeout<T>(
+  url: URL,
+  init: RequestInit,
+  timeoutMs: number,
+  consume: (response: Response) => Promise<T>,
+): Promise<{ data: T; response: Response }> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const signal =
+    init.signal == null ? controller.signal : AbortSignal.any([controller.signal, init.signal]);
+  const timeoutError = new DOMException('Upstream request timed out.', 'TimeoutError');
+  const timeout = setTimeout(() => {
+    controller.abort(timeoutError);
+  }, timeoutMs);
   try {
-    return await fetch(url, { ...init, signal: controller.signal });
+    const response = await fetch(url, { ...init, signal });
+    const data = await consume(response);
+    return { data, response };
+  } catch (error) {
+    if (controller.signal.reason === timeoutError)
+      throw new Error('upstream-timeout', { cause: error });
+    throw error;
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+export async function readTextWithLimit(response: Response, maxBytes: number) {
+  if (response.body === null) return '';
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let bytesRead = 0;
+  let result = '';
+
+  try {
+    let done = false;
+    while (!done) {
+      const chunk = await reader.read();
+      if (chunk.done) {
+        done = true;
+        continue;
+      }
+      bytesRead += chunk.value.byteLength;
+      if (bytesRead > maxBytes) {
+        await reader.cancel();
+        throw new Error('response-too-large');
+      }
+      result += decoder.decode(chunk.value, { stream: true });
+    }
+    return result + decoder.decode();
+  } finally {
+    reader.releaseLock();
   }
 }
 

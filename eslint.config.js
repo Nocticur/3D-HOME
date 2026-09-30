@@ -10,10 +10,10 @@ export default tseslint.config(
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
-    files: ['src/**/*.{ts,tsx}', 'edge-functions/**/*.ts'],
+    files: ['src/**/*.{ts,tsx}', 'edge-functions/**/*.ts', 'api/**/*.ts'],
     languageOptions: {
       parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
-      globals: { ...globals.browser, ...globals.es2023 },
+      globals: { ...globals.browser, ...globals.es2023, ...globals.node },
     },
     plugins: { 'jsx-a11y': jsxA11y, 'react-hooks': reactHooks },
     rules: {

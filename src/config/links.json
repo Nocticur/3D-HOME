@@ -3,36 +3,56 @@
     "id": "blog",
     "title": "博客",
     "image": "/assets/images/links/blog.webp",
-    "url": "https://tblog.mmzhiku.xyz",
-    "description": "个人博客与文章归档。",
+    "url": "https://blog.mourn.top/",
+    "description": "博客文章、分类与归档。",
     "tags": ["博客", "文章"],
-    "ctaLabel": "访问博客"
+    "ctaLabel": "访问博客",
+    "shortcuts": [
+      { "id": "articles", "label": "文章列表", "url": "https://blog.mourn.top/list/" },
+      { "id": "archive", "label": "文章归档", "url": "https://blog.mourn.top/archive/" },
+      { "id": "categories", "label": "文章分类", "url": "https://blog.mourn.top/categories/" }
+    ]
   },
   {
-    "id": "image-hosting",
-    "title": "图床",
-    "image": "/assets/images/links/img.webp",
-    "url": "https://img.mmzhiku.xyz",
-    "description": "用于管理和访问图片资源。",
-    "tags": ["图片", "资源"],
-    "ctaLabel": "访问图床"
-  },
-  {
-    "id": "analytics",
-    "title": "统计",
+    "id": "dynamic",
+    "title": "动态",
     "image": "/assets/images/links/stats.webp",
-    "url": "https://stats.mmzhiku.xyz/share/uAfsjwbIKgVPjxtc",
-    "description": "查看网站访问统计数据。",
-    "tags": ["统计", "数据"],
-    "ctaLabel": "查看统计"
+    "url": "https://blog.mourn.top/dynamic/",
+    "description": "查看博客动态、日历与时间线。",
+    "tags": ["动态", "日历", "时间线"],
+    "ctaLabel": "查看动态",
+    "shortcuts": [
+      { "id": "calendar", "label": "动态日历", "url": "https://blog.mourn.top/calendar/" },
+      { "id": "timeline", "label": "动态时间线", "url": "https://blog.mourn.top/timeline/" }
+    ]
   },
   {
-    "id": "toolbox",
-    "title": "工具盒子",
-    "image": "/assets/images/links/tool.webp",
-    "url": "https://tool.mmzhiku.xyz",
-    "description": "收集了一些常用的工具。",
-    "tags": ["工具", "盒子"],
-    "ctaLabel": "打开工具盒子"
+    "id": "life",
+    "title": "生活",
+    "image": "/assets/images/links/img.webp",
+    "url": "https://blog.mourn.top/life/notebooks/",
+    "description": "浏览生活手记、日常与地点记录。",
+    "tags": ["生活", "手记", "日常"],
+    "ctaLabel": "浏览生活记录",
+    "shortcuts": [
+      { "id": "routines", "label": "日常记录", "url": "https://blog.mourn.top/life/routines/" },
+      { "id": "places", "label": "地点记录", "url": "https://blog.mourn.top/life/places/" }
+    ]
+  },
+  {
+    "id": "about",
+    "title": "关于",
+    "image": "/assets/images/links/resume.webp",
+    "url": "https://blog.mourn.top/about/",
+    "description": "关于我、留言、友链、收藏与音乐。",
+    "tags": ["关于", "友链", "留言", "音乐"],
+    "ctaLabel": "了解更多",
+    "shortcuts": [
+      { "id": "pengyou", "label": "朋友们", "url": "https://blog.mourn.top/pengyou/" },
+      { "id": "friends", "label": "友情链接", "url": "https://blog.mourn.top/friends/" },
+      { "id": "guestbook", "label": "留言板", "url": "https://blog.mourn.top/guestbook/" },
+      { "id": "collections", "label": "收藏", "url": "https://blog.mourn.top/collections/" },
+      { "id": "music", "label": "音乐", "url": "https://blog.mourn.top/music/" }
+    ]
   }
 ]

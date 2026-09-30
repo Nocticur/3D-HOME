@@ -7,6 +7,7 @@ import {
   fetchWithTimeout,
   getEdgeCache,
   isPublicHttpsUrl,
+  readTextWithLimit,
   success,
   type EdgeContext,
 } from './shared.ts';
@@ -46,7 +47,11 @@ function asItems(value: unknown): unknown[] {
 function text(value: unknown): string {
   if (typeof value === 'string') {
     return value
-      .replace(/<!--[\s\S]*?(?:-->|$)|<\/?[a-z][^>]*(?:>|$)/gi, ' ')
+      .replace(
+        /<!--[\s\S]*?(?:-->|$)|<script\b[^>]*>[\s\S]*?<\/script\s*>|<style\b[^>]*>[\s\S]*?<\/style\s*>/gi,
+        ' ',
+      )
+      .replace(/<\/?[a-z][^>]*(?:>|$)/gi, ' ')
       .replace(/\s+/g, ' ')
       .trim();
   }
@@ -97,7 +102,11 @@ function normalizeItem(itemValue: unknown, feed: FeedConfig, atom: boolean) {
     return null;
   }
 
-  const excerpt = text(item.description ?? item.summary ?? item.content).slice(0, 360);
+  const excerpt =
+    [item.description, item.summary, item.content, item['content:encoded']]
+      .map(text)
+      .find((candidate) => candidate.length > 0)
+      ?.slice(0, 360) ?? '';
   const categories = asItems(item.category)
     .map((category) => text(asRecord(category)?.['@_term'] ?? category))
     .filter((category) => category.length > 0);
@@ -174,7 +183,7 @@ async function loadConfiguredFeeds(feeds: readonly FeedConfig[]) {
 }
 
 async function loadFeed(feed: FeedConfig) {
-  const response = await fetchWithTimeout(
+  const { data: xml } = await fetchWithTimeout(
     new URL(feed.feedUrl),
     {
       headers: {
@@ -183,25 +192,22 @@ async function loadFeed(feed: FeedConfig) {
       redirect: 'manual',
     },
     feedTimeoutMs,
+    async (response) => {
+      const contentType = response.headers.get('content-type') ?? '';
+      const contentLength = Number(response.headers.get('content-length') ?? 0);
+
+      if (
+        !response.ok ||
+        response.status >= 300 ||
+        contentLength > maxFeedBytes ||
+        !/(?:application|text)\/(?:atom\+xml|rss\+xml|xml)/i.test(contentType)
+      ) {
+        throw new Error('feed-unavailable');
+      }
+
+      return readTextWithLimit(response, maxFeedBytes);
+    },
   );
-  const contentType = response.headers.get('content-type') ?? '';
-  const contentLength = Number(response.headers.get('content-length') ?? 0);
-
-  if (
-    !response.ok ||
-    response.status >= 300 ||
-    contentLength > maxFeedBytes ||
-    !/(?:application|text)\/(?:atom\+xml|rss\+xml|xml)/i.test(contentType)
-  ) {
-    throw new Error('feed-unavailable');
-  }
-
-  const xml = await response.text();
-
-  if (new TextEncoder().encode(xml).byteLength > maxFeedBytes) {
-    throw new Error('feed-too-large');
-  }
-
   return normalizeFeed(xml, feed);
 }
 

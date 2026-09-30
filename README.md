@@ -26,10 +26,12 @@ pnpm dev
 
 ## 环境变量
 
-1、GitHub 与和风天气密钥仅配置在 EdgeOne 环境变量中，参考 `.env.example`。浏览器只访问同源 `/api/*`。
+GitHub 与和风天气密钥配置在 Vercel 项目的 Environment Variables 中，变量名见 `.env.example`。这些值只由服务端函数读取，浏览器只访问同源 `/api/*`。本地开发时可以把 `.env.example` 复制到 `.env.local` 并填写密钥。
 
-2、站点信息在config里面配置JSON。
+## Vercel 部署
 
-这块地方我没测试过
+项目根目录的 `vercel.json` 已配置 Vite 构建、`dist` 静态目录，以及 `/api/*`、`/robots.txt` 和 `/sitemap.xml` 函数路由。Vercel 使用 Node.js 24。若项目尚未导入，在 Vercel 中从 GitHub 导入 `Nocticur/3D-HOME` 并使用仓库根目录，然后先验证 Preview 部署，再更新正式部署。
 
-SEO 元信息统一维护在 `src/config/site.json`。`/robots.txt` 与 `/sitemap.xml` 由边缘函数按当前请求域名生成，不需要配置站点域名环境变量。
+在 Vercel 项目的 Domains 中添加 `home.mourn.top`，并按 Vercel 提供的记录配置 DNS。博客仍由独立站点提供；本项目通过 `blog.mourn.top` 链接博客页面并读取 `/rss.xml`。
+
+Preview 会输出 `noindex` 元信息，且 `/robots.txt` 禁止索引。生产 canonical 和站点地图使用 `src/config/site.json` 中的 `url`。

@@ -20,13 +20,22 @@ const index = new MiniSearch<IndexedDocument>({
 });
 
 const baseDocuments: IndexedDocument[] = [
-  ...linksConfig.map((link) => ({
-    content: `${link.description} ${link.tags.join(' ')}`,
-    id: `link:${link.id}`,
-    kind: '链接',
-    title: link.title,
-    url: link.url,
-  })),
+  ...linksConfig.flatMap((link) => [
+    {
+      content: `${link.description} ${link.tags.join(' ')}`,
+      id: `link:${link.id}`,
+      kind: '链接',
+      title: link.title,
+      url: link.url,
+    },
+    ...link.shortcuts.map((shortcut) => ({
+      content: `${link.title} ${link.description} ${link.tags.join(' ')}`,
+      id: `shortcut:${link.id}:${shortcut.id}`,
+      kind: '博客入口',
+      title: shortcut.label,
+      url: shortcut.url,
+    })),
+  ]),
   ...feedsConfig.map((feed) => ({
     content: feed.tags.join(' '),
     id: `feed:${feed.id}`,

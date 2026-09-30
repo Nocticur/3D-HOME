@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { ModalShell } from '@/components/common/modal-shell';
 import { ObjectShowcase } from '@/components/common/object-showcase';
-import { searchConfig } from '@/config';
+import { linksConfig, searchConfig } from '@/config';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useRoomStore } from '@/stores/room-store';
 import { runRoomCommand } from '@/utils/room-commands';
@@ -19,13 +19,16 @@ function isSearchableExternal(item: SearchItem): item is ExternalItem {
 
 export function SearchDialog() {
   const panel = useRoomStore((state) => state.panel);
+  const searchResetVersion = useRoomStore((state) => state.searchResetVersion);
   const closePanel = useRoomStore((state) => state.closePanel);
+  const openPanel = useRoomStore((state) => state.openPanel);
   const openFeed = useRoomStore((state) => state.openFeed);
   const openLink = useRoomStore((state) => state.openLink);
   const isDesktop = useMediaQuery('(min-width: 720px)');
   const fallback = searchConfig.scopes[0];
   const [scopeId, setScopeId] = useState(fallback?.id ?? '');
-  const [query, setQuery] = useState('');
+  const [searchState, setSearchState] = useState({ revision: 0, value: '' });
+  const query = searchState.revision === searchResetVersion ? searchState.value : '';
   const scope = searchConfig.scopes.find((item) => item.id === scopeId) ?? fallback;
   const externalItems = scope?.items.filter(isSearchableExternal) ?? [];
   const [engineId, setEngineId] = useState(externalItems[0]?.id ?? '');
@@ -87,7 +90,9 @@ export function SearchDialog() {
             type="search"
             value={query}
             placeholder={engine === undefined ? scope.placeholder : `在 ${engine.label} 中搜索`}
-            onChange={(event) => setQuery(event.currentTarget.value)}
+            onChange={(event) =>
+              setSearchState({ revision: searchResetVersion, value: event.currentTarget.value })
+            }
           />
         </label>
         <button type="submit" className="icon-button" aria-label="搜索">
@@ -108,7 +113,38 @@ export function SearchDialog() {
           ))}
         </div>
       )}
-      {query.trim().length > 0 ? (
+      {query.trim().length === 0 ? (
+        <nav className="search-blog-nav" aria-label="博客分区">
+          <h2>博客入口</h2>
+          <ul>
+            {linksConfig.map((link) => (
+              <li key={link.id}>
+                <a
+                  className="search-blog-main"
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <strong>{link.title}</strong>
+                  <ExternalLink aria-hidden="true" size={14} />
+                </a>
+                <div className="search-blog-shortcuts">
+                  {link.shortcuts.map((shortcut) => (
+                    <a
+                      href={shortcut.url}
+                      key={shortcut.id}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {shortcut.label}
+                    </a>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : (
         <section className="search-results" aria-label="站内搜索结果">
           <h2>站内结果</h2>
           {results.length === 0 ? (
@@ -129,14 +165,21 @@ export function SearchDialog() {
             </ul>
           )}
         </section>
-      ) : null}
+      )}
     </>
   );
 
   const open = panel === 'search';
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) closePanel();
+    if (nextOpen) openPanel('search');
+    else closePanel();
   };
+  const trigger = (
+    <button className="search-trigger" type="button">
+      <Search aria-hidden="true" size={18} />
+      <span>博客导航与搜索</span>
+    </button>
+  );
 
   if (isDesktop) {
     return (
@@ -146,6 +189,7 @@ export function SearchDialog() {
         onOpenChange={handleOpenChange}
         title="搜索终端"
         description="站内内容与外部搜索"
+        trigger={trigger}
       >
         {content}
       </ObjectShowcase>
@@ -158,6 +202,7 @@ export function SearchDialog() {
       onOpenChange={handleOpenChange}
       title="搜索终端"
       description="站内内容与外部搜索"
+      trigger={trigger}
     >
       {content}
     </ModalShell>

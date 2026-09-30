@@ -1,122 +1,123 @@
 {
   "avatar": "/assets/images/profile/home1.webp",
-  "bio": "欢迎来我博客做客哦",
+  "bio": "向 夜 驰 行 ， 不 问 喧 嚣\n身 沉 暮 色 ， 心 赴 归 途",
   "experience": [],
   "github": {
-    "username": "MmzMing"
+    "username": "Nocticur"
   },
   "intro": {
     "audioPhrases": [
-      { "phrase": "啾比~", "track": "/assets/audio/profile/chubby_0.mp3" },
-      { "phrase": "啾~比。", "track": "/assets/audio/profile/chubby_1.mp3" },
-      { "phrase": "啾比~~~~", "track": "/assets/audio/profile/chubby_2.mp3" },
-      { "phrase": "菲八啾比！！！！！", "track": "/assets/audio/profile/phoeba_chubby_0.mp3" },
-      { "phrase": "菲八啾比！", "track": "/assets/audio/profile/phoeba_chubby_1.mp3" },
-      { "phrase": "菲八啾比(σ｀д′)σ", "track": "/assets/audio/profile/phoeba_chubby_2.mp3" },
-      { "phrase": "菲八啾比╰（‵□′）╯", "track": "/assets/audio/profile/phoeba_chubby_3.mp3" },
-      { "phrase": "菲比~", "track": "/assets/audio/profile/phoebe_0.mp3" },
-      { "phrase": "菲比ヾ(•ω•`)o", "track": "/assets/audio/profile/phoebe_1.mp3" },
-      { "phrase": "菲~比~~", "track": "/assets/audio/profile/phoebe_2.mp3" },
+      {
+        "phrase": "啾比~",
+        "track": "/assets/audio/profile/chubby_0.mp3"
+      },
+      {
+        "phrase": "啾~比。",
+        "track": "/assets/audio/profile/chubby_1.mp3"
+      },
+      {
+        "phrase": "啾比~~~~",
+        "track": "/assets/audio/profile/chubby_2.mp3"
+      },
+      {
+        "phrase": "菲八啾比！！！！！",
+        "track": "/assets/audio/profile/phoeba_chubby_0.mp3"
+      },
+      {
+        "phrase": "菲八啾比！",
+        "track": "/assets/audio/profile/phoeba_chubby_1.mp3"
+      },
+      {
+        "phrase": "菲八啾比(σ｀д′)σ",
+        "track": "/assets/audio/profile/phoeba_chubby_2.mp3"
+      },
+      {
+        "phrase": "菲八啾比╰（‵□′）╯",
+        "track": "/assets/audio/profile/phoeba_chubby_3.mp3"
+      },
+      {
+        "phrase": "菲比~",
+        "track": "/assets/audio/profile/phoebe_0.mp3"
+      },
+      {
+        "phrase": "菲比ヾ(•ω•`)o",
+        "track": "/assets/audio/profile/phoebe_1.mp3"
+      },
+      {
+        "phrase": "菲~比~~",
+        "track": "/assets/audio/profile/phoebe_2.mp3"
+      },
       {
         "phrase": "菲比啾比Ciallo～(∠・ω< )⌒★",
         "track": "/assets/audio/profile/phoebe_chubby_0.mp3"
       },
-      { "phrase": "菲比啾比(。・ω・。)", "track": "/assets/audio/profile/phoebe_chubby_1.mp3" },
-      { "phrase": "菲比啾比－O－", "track": "/assets/audio/profile/phoebe_chubby_2.mp3" },
+      {
+        "phrase": "菲比啾比(。・ω・。)",
+        "track": "/assets/audio/profile/phoebe_chubby_1.mp3"
+      },
+      {
+        "phrase": "菲比啾比－O－",
+        "track": "/assets/audio/profile/phoebe_chubby_2.mp3"
+      },
       {
         "phrase": "菲比啾比Ciallo～(∠・ω< )⌒★",
         "track": "/assets/audio/profile/phoebe_chubby_3.mp3"
       },
-      { "phrase": "菲比啾比~~", "track": "/assets/audio/profile/phoebe_chubby_4.mp3" },
-      { "phrase": "菲比啾比(*^_^*)", "track": "/assets/audio/profile/phoebe_chubby_5.mp3" },
-      { "phrase": "菲比啾比(╹ڡ╹ )", "track": "/assets/audio/profile/phoebe_chubby_6.mp3" },
-      { "phrase": "菲比啾比(*^▽^*)", "track": "/assets/audio/profile/phoebe_chubby_7.mp3" }
+      {
+        "phrase": "菲比啾比~~",
+        "track": "/assets/audio/profile/phoebe_chubby_4.mp3"
+      },
+      {
+        "phrase": "菲比啾比(*^_^*)",
+        "track": "/assets/audio/profile/phoebe_chubby_5.mp3"
+      },
+      {
+        "phrase": "菲比啾比(╹ڡ╹ )",
+        "track": "/assets/audio/profile/phoebe_chubby_6.mp3"
+      },
+      {
+        "phrase": "菲比啾比(*^▽^*)",
+        "track": "/assets/audio/profile/phoebe_chubby_7.mp3"
+      }
     ],
     "dollFonts": [
       {
         "family": "Ark Pixel",
         "src": "/assets/fonts/ark-pixel-12px-proportional-zh-cn.woff"
       },
-      { "family": "ZCOOL KuaiLe", "src": "/assets/fonts/zcool-kuaile.ttf" },
+      {
+        "family": "ZCOOL KuaiLe",
+        "src": "/assets/fonts/zcool-kuaile.ttf"
+      },
       {
         "family": "ZCOOL QingKe HuangYou",
         "src": "/assets/fonts/zcool-qingke-huangyou.ttf"
       },
-      { "family": "ZCOOL XiaoWei", "src": "/assets/fonts/zcool-xiaowei.ttf" }
+      {
+        "family": "ZCOOL XiaoWei",
+        "src": "/assets/fonts/zcool-xiaowei.ttf"
+      }
     ],
-    "role": "全干工程师",
+    "role": "零手戳/三无产品制图师",
     "sticker": "/assets/images/profile/home2.webp"
   },
-  "name": "MmzMing",
-  "skills": [
-    {
-      "label": "编程语言",
-      "items": [
-        { "color": "#8b5cf6", "icon": "vibe-coding", "level": "max", "name": "Vibe Coding" },
-        { "color": "#437291", "icon": "java", "level": "xhigh", "name": "Java" },
-        { "color": "#3776ab", "icon": "python", "level": "low", "name": "Python" }
-      ]
-    },
-    {
-      "label": "框架与库",
-      "items": [
-        { "color": "#6db33f", "icon": "spring", "level": "xhigh", "name": "Spring" },
-        { "color": "#6db33f", "icon": "spring-cloud", "level": "high", "name": "Spring Cloud" },
-        { "color": "#009688", "icon": "fastapi", "level": "low", "name": "FastAPI" },
-        { "color": "#d71f00", "icon": "sqlalchemy", "level": "low", "name": "SQLAlchemy" },
-        { "color": "#61dafb", "icon": "react", "level": "medium", "name": "React" },
-        { "color": "#4fc08d", "icon": "vue", "level": "high", "name": "Vue" }
-      ]
-    },
-    {
-      "label": "数据库",
-      "items": [
-        { "color": "#4479a1", "icon": "mysql", "level": "xhigh", "name": "MySQL" },
-        { "color": "#f80000", "icon": "oracle", "level": "xhigh", "name": "Oracle" },
-        { "color": "#47a248", "icon": "mongodb", "level": "medium", "name": "MongoDB" },
-        { "color": "#4169e1", "icon": "postgresql", "level": "medium", "name": "PostgreSQL" }
-      ]
-    },
-    {
-      "label": "中间件",
-      "items": [
-        { "color": "#ff4438", "icon": "redis", "level": "xhigh", "name": "Redis" },
-        { "color": "#005571", "icon": "elasticsearch", "level": "medium", "name": "Elasticsearch" },
-        { "color": "#d22128", "icon": "rocketmq", "level": "xhigh", "name": "RocketMQ" },
-        { "color": "#ff6600", "icon": "rabbitmq", "level": "high", "name": "RabbitMQ" },
-        { "color": "#231f20", "icon": "kafka", "level": "low", "name": "Kafka" },
-        { "color": "#ff6a00", "icon": "oss", "level": "high", "name": "阿里云 OSS" },
-        { "color": "#00a0e9", "icon": "xxl-job", "level": "high", "name": "XXL-Job" },
-        { "color": "#c72e49", "icon": "minio", "level": "high", "name": "MinIO" },
-        { "color": "#e6522c", "icon": "prometheus", "level": "medium", "name": "Prometheus" },
-        { "color": "#f46800", "icon": "grafana", "level": "low", "name": "Grafana" }
-      ]
-    },
-    {
-      "label": "开发工具",
-      "items": [
-        { "color": "#d24939", "icon": "jenkins", "level": "low", "name": "Jenkins" },
-        { "color": "#2496ed", "icon": "docker", "level": "high", "name": "Docker" },
-        { "color": "#326ce5", "icon": "kubernetes", "level": "medium", "name": "Kubernetes" },
-        { "color": "#f80000", "icon": "plsql", "level": "xhigh", "name": "PL/SQL Developer" }
-      ]
-    }
-  ],
+  "name": "Nocticur",
+  "skills": [],
   "socialLinks": [
     {
       "color": "#ffffff",
       "label": "GitHub",
-      "url": "https://github.com/MmzMing"
+      "url": "https://github.com/Nocticur"
     },
     {
       "color": "#fb7299",
       "label": "Bilibili",
-      "url": "https://space.bilibili.com/15446538"
+      "url": "https://space.bilibili.com/645892937"
     },
     {
       "color": "#12b7f5",
       "label": "QQ群",
-      "url": "https://qm.qq.com/q/FyyFwfnoEU"
+      "url": "https://qm.qq.com/q/2R07cjGTZ0"
     }
   ]
 }

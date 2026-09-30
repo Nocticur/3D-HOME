@@ -45,7 +45,13 @@ export function FeedDialog() {
           onRetry={() => void query.refetch()}
         />
       ) : null}
-      {query.data?.data.articles.length === 0 ? (
+      {query.data?.data.failures.length ? (
+        <ErrorStatus
+          message={query.data.data.failures.map(({ message }) => message).join(' ')}
+          onRetry={() => void query.refetch()}
+        />
+      ) : null}
+      {query.data?.data.articles.length === 0 && query.data.data.failures.length === 0 ? (
         <p className="empty-state">当前来源没有可显示的文章。</p>
       ) : null}
       {query.data === undefined ? null : (

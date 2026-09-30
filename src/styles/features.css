@@ -631,6 +631,121 @@
   width: 100%;
 }
 
+.search-trigger {
+  position: fixed;
+  z-index: var(--z-popover);
+  top: max(18px, env(safe-area-inset-top));
+  left: 50%;
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  background: var(--surface-solid);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 13px;
+  transform: translateX(-50%);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.search-trigger:hover,
+.search-trigger:focus-visible {
+  border-color: var(--active);
+  background: var(--active-soft);
+  color: var(--active);
+}
+
+.search-blog-nav h2 {
+  margin: 20px 0 10px;
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.search-blog-nav ul,
+.link-shortcuts ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.search-blog-nav li {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-muted);
+}
+
+.search-blog-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.search-blog-main:hover,
+.search-blog-shortcuts a:hover {
+  color: var(--active);
+}
+
+.search-blog-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 8px;
+}
+
+.search-blog-shortcuts a {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.link-shortcuts {
+  margin: 18px 0;
+}
+
+.link-shortcuts h3 {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.link-shortcuts a {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--ink);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.link-shortcuts a:hover {
+  border-color: var(--active);
+  background: var(--active-soft);
+  color: var(--active);
+}
+
 .search-form input {
   min-height: 44px;
   border: 0;

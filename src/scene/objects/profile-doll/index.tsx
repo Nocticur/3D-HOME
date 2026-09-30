@@ -10,15 +10,13 @@ import { useRoomInteraction } from '@/scene/primitives/use-room-interaction';
 import { useRoomStore } from '@/stores/room-store';
 import { playProfileAudio } from '@/utils/room-audio';
 
-const dollImage = '/assets/images/profile/home2.webp';
-
 export function ProfileDoll() {
   const animated = useRef<Group>(null);
   const [pressed, setPressed] = useState(false);
   const interaction = useRoomInteraction('profile-doll');
   const releaseDollWords = useRoomStore((state) => state.releaseDollWords);
   const soundEnabled = useRoomStore((state) => state.isSoundEnabled);
-  const texture = useTexture(dollImage);
+  const texture = useTexture(profileConfig.intro.sticker);
   const invalidate = useThree((state) => state.invalidate);
 
   useEffect(() => {

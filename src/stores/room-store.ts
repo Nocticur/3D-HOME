@@ -22,6 +22,7 @@ interface RoomState {
   isWeatherOpen: boolean;
   objectState: RoomObjectState;
   panel: PanelId;
+  searchResetVersion: number;
   selectedFeedId: string | null;
   selectedLinkId: string | null;
   theme: ThemeMode;
@@ -101,6 +102,7 @@ export const useRoomStore = create<RoomState>((set) => ({
   isWeatherOpen: false,
   objectState: initialObjectState,
   panel: null,
+  searchResetVersion: 0,
   selectedFeedId: null,
   selectedLinkId: null,
   theme: initialTheme,
@@ -164,6 +166,8 @@ export const useRoomStore = create<RoomState>((set) => ({
       isWeatherOpen: false,
       objectState: { ...state.objectState, doorOpen: false },
       panel,
+      searchResetVersion:
+        panel === 'search' ? state.searchResetVersion + 1 : state.searchResetVersion,
       selectedFeedId: null,
       selectedLinkId: null,
     })),

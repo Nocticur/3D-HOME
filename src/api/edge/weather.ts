@@ -76,7 +76,12 @@ function qweatherUrl(host: string, path: string, longitude: number, latitude: nu
 }
 
 function qweatherRequest(url: URL, apiKey: string) {
-  return fetchWithTimeout(url, { headers: { 'x-qw-api-key': apiKey } }, 5_000);
+  return fetchWithTimeout(
+    url,
+    { headers: { 'x-qw-api-key': apiKey } },
+    5_000,
+    (response) => response.json() as Promise<unknown>,
+  );
 }
 
 async function respondWithWeather(context: EdgeContext, geo: EdgeGeo) {
@@ -105,14 +110,14 @@ async function respondWithWeather(context: EdgeContext, geo: EdgeGeo) {
   locationUrl.searchParams.set('lang', config.data.language);
 
   try {
-    const [currentResponse, forecastResponse, locationResponse] = await Promise.all([
+    const [currentResult, forecastResult, locationResult] = await Promise.all([
       qweatherRequest(currentUrl, apiKey),
       qweatherRequest(forecastUrl, apiKey),
       qweatherRequest(locationUrl, apiKey),
     ]);
-    const currentPayload: unknown = await currentResponse.json();
-    const forecastPayload: unknown = await forecastResponse.json();
-    const locationPayload: unknown = await locationResponse.json();
+    const { data: currentPayload, response: currentResponse } = currentResult;
+    const { data: forecastPayload, response: forecastResponse } = forecastResult;
+    const { data: locationPayload, response: locationResponse } = locationResult;
     const current = qweatherNowSchema.safeParse(currentPayload);
     const forecast = qweatherForecastSchema.safeParse(forecastPayload);
     const location = qweatherLocationSchema.safeParse(locationPayload);
@@ -133,7 +138,8 @@ async function respondWithWeather(context: EdgeContext, geo: EdgeGeo) {
       return failure('provider-unavailable', '天气数据暂时不可用。', requestId, true, 502);
     }
 
-    const cacheMaxAge = Math.floor(config.data.refreshIntervalMs / 1_000).toString();
+    const cacheTtlSeconds = Math.floor(config.data.refreshIntervalMs / 1_000);
+    const cacheMaxAge = cacheTtlSeconds.toString();
     const response = success(
       {
         current: {
@@ -167,11 +173,16 @@ async function respondWithWeather(context: EdgeContext, geo: EdgeGeo) {
       requestId,
       {
         headers: {
-          'cache-control': `s-maxage=${cacheMaxAge}, stale-while-revalidate=1800`,
+          'cache-control': 'no-store',
         },
       },
     );
-    context.waitUntil(getEdgeCache().put(cacheKey, response.clone()));
+    const cacheResponse = response.clone();
+    cacheResponse.headers.set(
+      'cache-control',
+      `public, max-age=0, s-maxage=${cacheMaxAge}, stale-while-revalidate=1800`,
+    );
+    context.waitUntil(getEdgeCache().put(cacheKey, cacheResponse, cacheTtlSeconds));
     return response;
   } catch {
     return failure('provider-unavailable', '天气数据暂时不可用。', requestId, true, 502);
@@ -179,7 +190,7 @@ async function respondWithWeather(context: EdgeContext, geo: EdgeGeo) {
 }
 
 export async function handleWeatherGet(context: EdgeContext) {
-  const geo = getEdgeGeo(context.request);
+  const geo = getEdgeGeo(context.request, context.geo);
   if (geo === null) {
     return failure('location-unavailable', '无法获取当前位置。', createRequestId(), false, 422);
   }

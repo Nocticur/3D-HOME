@@ -4,12 +4,11 @@ import { useMemo, useRef } from 'react';
 import { AdditiveBlending, type ShaderMaterial } from 'three';
 
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import { profileConfig } from '@/config';
 import { roomRevealRuntime } from '@/scene/effects/line-reveal';
 import { LineBox } from '@/scene/primitives/line-shape';
 import { useRoomInteraction } from '@/scene/primitives/use-room-interaction';
 import { useRoomStore } from '@/stores/room-store';
-
-const portraitImage = '/assets/images/profile/home1.webp';
 
 const rainbowVertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -117,7 +116,7 @@ function RainbowFrameGlow({ reducedMotion }: { reducedMotion: boolean }) {
 
 export function Portrait() {
   const interaction = useRoomInteraction('portrait');
-  const texture = useTexture(portraitImage);
+  const texture = useTexture(profileConfig.avatar);
   const theme = useRoomStore((state) => state.theme);
   const reducedMotion = useReducedMotion();
 

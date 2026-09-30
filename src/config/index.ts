@@ -27,6 +27,16 @@ const linkSchema = z.object({
   description: z.string().min(1),
   id: z.string().regex(/^[a-z\d](?:[a-z\d-]*[a-z\d])?$/),
   image: localAsset,
+  shortcuts: z
+    .array(
+      z.object({
+        id: z.string().regex(/^[a-z\d](?:[a-z\d-]*[a-z\d])?$/),
+        label: z.string().min(1),
+        url: httpsUrl,
+      }),
+    )
+    .optional()
+    .default([]),
   tags: z.array(z.string().min(1)),
   title: z.string().min(1),
   url: httpsUrl,
@@ -67,7 +77,7 @@ const profileSchema = z.object({
         z.object({
           color: z.string().optional(),
           icon: z.string().min(1),
-          level: z.enum(['low', 'medium', 'high', 'xhigh', 'max', 'ultra']),
+          level: z.enum(['low', 'medium', 'high', 'xhigh', 'max', 'ultra']).optional(),
           name: z.string().min(1),
         }),
       ),
@@ -152,6 +162,7 @@ const siteSchema = z.object({
   siteUrl: httpsUrl,
   socialDescription: z.string().min(1),
   title: z.string().min(1),
+  url: httpsUrl,
 });
 
 const siteRecordLinkSchema = z.object({
@@ -160,8 +171,8 @@ const siteRecordLinkSchema = z.object({
 });
 const siteRecordsSchema = z.object({
   copyright: z.string().min(1),
-  icp: siteRecordLinkSchema,
-  police: siteRecordLinkSchema.extend({ icon: localAsset }),
+  icp: siteRecordLinkSchema.nullable(),
+  police: siteRecordLinkSchema.extend({ icon: localAsset }).nullable(),
 });
 
 const themeSchema = z.object({

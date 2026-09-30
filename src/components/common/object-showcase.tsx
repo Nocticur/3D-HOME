@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 import * as Dialog from 'radix-ui/dialog';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 export type ObjectShowcaseLayout =
   | 'bookshelf-split'
@@ -17,6 +17,7 @@ interface ObjectShowcaseProps {
   layout: ObjectShowcaseLayout;
   onOpenChange: (open: boolean) => void;
   open: boolean;
+  trigger?: ReactElement;
   title: string;
 }
 
@@ -27,6 +28,7 @@ export function ObjectShowcase({
   layout,
   onOpenChange,
   open,
+  trigger,
   title,
 }: ObjectShowcaseProps) {
   const dismissHandlers = dismissOnOutside
@@ -38,6 +40,7 @@ export function ObjectShowcase({
 
   return (
     <Dialog.Root modal={false} open={open} onOpenChange={onOpenChange}>
+      {trigger === undefined ? null : <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Content {...dismissHandlers} className="object-showcase" data-layout={layout}>
           <header className="object-showcase-header">

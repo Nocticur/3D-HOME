@@ -8,7 +8,7 @@ import type { ProfileConfig } from '@/config';
 
 import { resolveSkillIcon } from './skill-icons';
 
-type SkillLevel = ProfileConfig['skills'][number]['items'][number]['level'];
+type SkillLevel = NonNullable<ProfileConfig['skills'][number]['items'][number]['level']>;
 
 const socialIcons: Record<string, IconType> = {
   Bilibili: FaBilibili,
@@ -61,48 +61,52 @@ export function ProfileCard({ profile }: { profile: ProfileConfig }) {
           );
         })}
       </div>
-      <section className="profile-skills" aria-labelledby="skills-title">
-        <h3 id="skills-title">技术栈</h3>
-        {profile.skills.map((group, groupIndex) => {
-          const groupHeadingId = `${skillGroupId}-${String(groupIndex)}`;
+      {profile.skills.length === 0 ? null : (
+        <section className="profile-skills" aria-labelledby="skills-title">
+          <h3 id="skills-title">技术栈</h3>
+          {profile.skills.map((group, groupIndex) => {
+            const groupHeadingId = `${skillGroupId}-${String(groupIndex)}`;
 
-          return (
-            <section
-              key={group.label}
-              className="profile-skill-group"
-              aria-labelledby={groupHeadingId}
-            >
-              <h4 id={groupHeadingId}>{group.label}</h4>
-              <ul className="profile-skill-grid" aria-label={group.label}>
-                {group.items.map((skill) => {
-                  const Icon = resolveSkillIcon(skill.icon);
-                  const level = skillLevels[skill.level];
-                  const style = {
-                    '--profile-skill-color': skill.color ?? undefined,
-                    '--profile-level-color': level.color,
-                  } as CSSProperties;
+            return (
+              <section
+                key={group.label}
+                className="profile-skill-group"
+                aria-labelledby={groupHeadingId}
+              >
+                <h4 id={groupHeadingId}>{group.label}</h4>
+                <ul className="profile-skill-grid" aria-label={group.label}>
+                  {group.items.map((skill) => {
+                    const Icon = resolveSkillIcon(skill.icon);
+                    const level = skill.level === undefined ? undefined : skillLevels[skill.level];
+                    const style = {
+                      '--profile-skill-color': skill.color ?? undefined,
+                      '--profile-level-color': level?.color,
+                    } as CSSProperties;
 
-                  return (
-                    <li data-level={skill.level} key={skill.name} style={style}>
-                      <span className="profile-skill-icon" aria-hidden="true">
-                        {Icon === undefined ? <Code2 size={19} /> : <Icon size={19} />}
-                      </span>
-                      <span className="profile-skill-name">{skill.name}</span>
-                      <span
-                        className="profile-skill-level"
-                        data-level={skill.level}
-                        style={{ '--profile-level-color': level.color } as CSSProperties}
-                      >
-                        {level.label}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          );
-        })}
-      </section>
+                    return (
+                      <li data-level={skill.level} key={skill.name} style={style}>
+                        <span className="profile-skill-icon" aria-hidden="true">
+                          {Icon === undefined ? <Code2 size={19} /> : <Icon size={19} />}
+                        </span>
+                        <span className="profile-skill-name">{skill.name}</span>
+                        {level === undefined ? null : (
+                          <span
+                            className="profile-skill-level"
+                            data-level={skill.level}
+                            style={{ '--profile-level-color': level.color } as CSSProperties}
+                          >
+                            {level.label}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            );
+          })}
+        </section>
+      )}
     </section>
   );
 }

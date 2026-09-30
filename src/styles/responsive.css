@@ -44,6 +44,15 @@
 }
 
 @media (width <= 719px) {
+  .search-trigger {
+    top: max(72px, calc(env(safe-area-inset-top) + 64px));
+  }
+
+  .search-blog-nav ul,
+  .link-shortcuts ul {
+    grid-template-columns: 1fr;
+  }
+
   .room-heading {
     top: max(22px, env(safe-area-inset-top));
     left: 22px;

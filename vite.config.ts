@@ -21,9 +21,19 @@ function readRequestBody(request: IncomingMessage) {
   });
 }
 
-function siteSeo(): Plugin {
-  const siteUrl = siteConfig.siteUrl.replace(/\/+$/, '');
-  const ogImage = `${siteUrl}${siteConfig.image}`;
+function escapeHtml(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function siteSeo(env: Record<string, string | undefined>): Plugin {
+  const siteUrl = new URL(siteConfig.siteUrl).origin;
+  const ogImage = new URL(siteConfig.image, `${siteUrl}/`).href;
+  const isPreview = env.VERCEL_ENV === 'preview';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -48,15 +58,16 @@ function siteSeo(): Plugin {
   };
 
   const replacements: Record<string, string> = {
-    __SITE_AUTHOR__: siteConfig.author,
-    __SITE_DESCRIPTION__: siteConfig.description,
-    __SITE_IMAGE_ALT__: siteConfig.imageAlt,
+    __SITE_AUTHOR__: escapeHtml(siteConfig.author),
+    __SITE_CANONICAL__: `${siteUrl}/`,
+    __SITE_DESCRIPTION__: escapeHtml(siteConfig.description),
+    __SITE_IMAGE_ALT__: escapeHtml(siteConfig.imageAlt),
     __SITE_JSONLD__: JSON.stringify(jsonLd).replaceAll('<', '\\u003c'),
-    __SITE_NAME__: siteConfig.siteName,
-    __SITE_OG_IMAGE__: ogImage,
-    __SITE_SOCIAL_DESCRIPTION__: siteConfig.socialDescription,
-    __SITE_TITLE__: siteConfig.title,
-    __SITE_URL__: siteUrl,
+    __SITE_NAME__: escapeHtml(siteConfig.siteName),
+    __SITE_OG_IMAGE__: escapeHtml(ogImage),
+    __SITE_ROBOTS__: isPreview ? 'noindex,nofollow,noarchive' : 'index,follow',
+    __SITE_SOCIAL_DESCRIPTION__: escapeHtml(siteConfig.socialDescription),
+    __SITE_TITLE__: escapeHtml(siteConfig.title),
   };
 
   return {
@@ -134,7 +145,7 @@ export default defineConfig(({ mode }) => {
   const edgeEnv = { ...process.env, ...loadEnv(mode, process.cwd(), '') };
 
   return {
-    plugins: [react(), localEdgeApi(edgeEnv), siteSeo()],
+    plugins: [react(), localEdgeApi(edgeEnv), siteSeo(edgeEnv)],
     resolve: { tsconfigPaths: true },
     build: {
       // The 3D runtime is intentionally shipped as one vendor chunk.

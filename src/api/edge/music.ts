@@ -2,7 +2,13 @@ import { z } from 'zod';
 
 import musicConfigData from '../../config/music.json' with { type: 'json' };
 
-import { createRequestId, failure, fetchWithTimeout, success } from './shared.ts';
+import {
+  createRequestId,
+  failure,
+  fetchWithTimeout,
+  readTextWithLimit,
+  success,
+} from './shared.ts';
 
 const httpsUrl = z.url().refine((value) => new URL(value).protocol === 'https:');
 
@@ -79,15 +85,21 @@ async function requestMeting(
   template: string,
   config: z.infer<typeof musicConfigSchema>['meting'],
 ) {
-  const response = await fetchWithTimeout(
+  const { data: payload } = await fetchWithTimeout(
     providerUrl(template, config),
     { headers: { accept: 'application/json' } },
     7_000,
+    async (response) => {
+      const contentLength = Number(response.headers.get('content-length') ?? 0);
+      if (!response.ok || contentLength > 1_500_000) return null;
+      const text = await readTextWithLimit(response, 1_500_000);
+      try {
+        return JSON.parse(text) as unknown;
+      } catch {
+        return null;
+      }
+    },
   );
-  if (!response.ok) return null;
-  const contentLength = Number(response.headers.get('content-length') ?? 0);
-  if (contentLength > 1_500_000) return null;
-  const payload: unknown = await response.json().catch(() => null);
   const parsed = metingPlaylistSchema.safeParse(payload);
   return parsed.success ? parsed.data : null;
 }

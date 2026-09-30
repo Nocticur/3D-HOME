@@ -14,6 +14,21 @@ export function LinkDetailCard({ link }: { link: LinkConfig }) {
         </div>
         <h2>{link.title}</h2>
         <p>{link.description}</p>
+        {link.shortcuts.length === 0 ? null : (
+          <nav className="link-shortcuts" aria-label={`${link.title}子页面`}>
+            <h3>常用入口</h3>
+            <ul>
+              {link.shortcuts.map((shortcut) => (
+                <li key={shortcut.id}>
+                  <a href={shortcut.url} target="_blank" rel="noopener noreferrer">
+                    {shortcut.label}
+                    <ExternalLink aria-hidden="true" size={14} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
         <a className="primary-action" href={link.url} target="_blank" rel="noopener noreferrer">
           {link.ctaLabel}
           <ExternalLink aria-hidden="true" size={16} />

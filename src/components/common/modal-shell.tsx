@@ -1,12 +1,13 @@
 import { X } from 'lucide-react';
 import * as Dialog from 'radix-ui/dialog';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 interface ModalShellProps {
   children: ReactNode;
   description: string;
   onOpenChange: (open: boolean) => void;
   open: boolean;
+  trigger?: ReactElement;
   size?: 'compact' | 'wide';
   title: string;
 }
@@ -16,11 +17,13 @@ export function ModalShell({
   description,
   onOpenChange,
   open,
+  trigger,
   size = 'wide',
   title,
 }: ModalShellProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      {trigger === undefined ? null : <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
         <Dialog.Content className="dialog-content" data-size={size}>

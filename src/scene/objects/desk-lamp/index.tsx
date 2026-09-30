@@ -12,6 +12,7 @@ export function DeskLamp() {
   const theme = useRoomStore((state) => state.theme);
   const color = theme === 'light' ? '#000000' : '#f3f4f6';
   const [icpHovered, setIcpHovered] = useState(false);
+  const icpRecord = siteRecordsConfig.icp;
   useCursor(icpHovered);
 
   return (
@@ -56,31 +57,33 @@ export function DeskLamp() {
       />
       <LineCylinder args={[0.07, 0.07, 0.34, 10]} position={[0, -0.48, -0.1]} />
       <LineBox args={[0.58, 0.08, 0.25]} position={[0, -0.68, -0.04]} />
-      <group position={[0, 0.86, 0.18]}>
-        <LineBox args={[0.68, 0.3, 0.06]} accent={icpHovered ? 'active' : undefined} />
-        <Text
-          anchorX="center"
-          anchorY="middle"
-          color={icpHovered ? '#0e7490' : color}
-          font={sceneFont}
-          fontSize={0.17}
-          position={[0, 0, 0.04]}
-          onClick={(event) => {
-            event.stopPropagation();
-            window.open(siteRecordsConfig.icp.url, '_blank', 'noopener,noreferrer');
-          }}
-          onPointerOut={(event) => {
-            event.stopPropagation();
-            setIcpHovered(false);
-          }}
-          onPointerOver={(event) => {
-            event.stopPropagation();
-            setIcpHovered(true);
-          }}
-        >
-          ICP
-        </Text>
-      </group>
+      {icpRecord === null ? null : (
+        <group position={[0, 0.86, 0.18]}>
+          <LineBox args={[0.68, 0.3, 0.06]} accent={icpHovered ? 'active' : undefined} />
+          <Text
+            anchorX="center"
+            anchorY="middle"
+            color={icpHovered ? '#0e7490' : color}
+            font={sceneFont}
+            fontSize={0.17}
+            position={[0, 0, 0.04]}
+            onClick={(event) => {
+              event.stopPropagation();
+              window.open(icpRecord.url, '_blank', 'noopener,noreferrer');
+            }}
+            onPointerOut={(event) => {
+              event.stopPropagation();
+              setIcpHovered(false);
+            }}
+            onPointerOver={(event) => {
+              event.stopPropagation();
+              setIcpHovered(true);
+            }}
+          >
+            ICP
+          </Text>
+        </group>
+      )}
       <InteractionProxy args={[3, 1.35, 0.9]} position={[0, -0.2, 0]} />
     </group>
   );

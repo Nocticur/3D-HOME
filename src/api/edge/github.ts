@@ -108,7 +108,7 @@ export async function handleGithubGet(context: EdgeContext) {
   from.setUTCDate(from.getUTCDate() - 364);
 
   try {
-    const upstream = await fetchWithTimeout(
+    const { response: upstream, data: payload } = await fetchWithTimeout(
       new URL('https://api.github.com/graphql'),
       {
         body: JSON.stringify({
@@ -128,8 +128,8 @@ export async function handleGithubGet(context: EdgeContext) {
         method: 'POST',
       },
       5_000,
+      (response) => response.json() as Promise<unknown>,
     );
-    const payload: unknown = await upstream.json();
     const parsed = graphQlResponseSchema.safeParse(payload);
     if (!upstream.ok || !parsed.success) {
       return failure('provider-unavailable', 'GitHub 数据暂时不可用。', requestId, true, 502);

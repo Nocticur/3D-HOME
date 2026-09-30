@@ -56,19 +56,25 @@ function RecordLink({ icon, label, position, url }: RecordLinkProps) {
 }
 
 export function SiteRecords() {
+  if (siteRecordsConfig.icp === null && siteRecordsConfig.police === null) return null;
+
   return (
     <group position={[-7.65, 4.48, -8.2]}>
-      <RecordLink
-        label={siteRecordsConfig.icp.label}
-        position={[0, 0.24, 0]}
-        url={siteRecordsConfig.icp.url}
-      />
-      <RecordLink
-        icon={siteRecordsConfig.police.icon}
-        label={siteRecordsConfig.police.label}
-        position={[0, -0.24, 0]}
-        url={siteRecordsConfig.police.url}
-      />
+      {siteRecordsConfig.icp === null ? null : (
+        <RecordLink
+          label={siteRecordsConfig.icp.label}
+          position={[0, 0.24, 0]}
+          url={siteRecordsConfig.icp.url}
+        />
+      )}
+      {siteRecordsConfig.police === null ? null : (
+        <RecordLink
+          icon={siteRecordsConfig.police.icon}
+          label={siteRecordsConfig.police.label}
+          position={[0, -0.24, 0]}
+          url={siteRecordsConfig.police.url}
+        />
+      )}
     </group>
   );
 }
