@@ -1,10 +1,11 @@
-import { Line, Text, useCursor, useTexture } from '@react-three/drei';
+import { Line, Text, useCursor } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 import { MathUtils, type Group } from 'three';
 
 import { linksConfig, sceneFont, type LinkConfig } from '@/config';
 import { InteractionProxy, LineBox } from '@/scene/primitives/line-shape';
+import { TextureMaterial } from '@/scene/primitives/texture-material';
 import { useRoomInteraction } from '@/scene/primitives/use-room-interaction';
 import { useRoomStore } from '@/stores/room-store';
 
@@ -18,7 +19,6 @@ const bubbleTargets = [
 function LinkBubble({ index, link, open }: { index: number; link: LinkConfig; open: boolean }) {
   const bubble = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
-  const texture = useTexture(link.image);
   const openLink = useRoomStore((state) => state.openLink);
   const theme = useRoomStore((state) => state.theme);
   const invalidate = useThree((state) => state.invalidate);
@@ -65,7 +65,10 @@ function LinkBubble({ index, link, open }: { index: number; link: LinkConfig; op
       <LineBox args={[1.82, 1.04, 0.1]} hovered={hovered} accent={hovered ? 'active' : undefined} />
       <mesh position={[-0.54, 0, 0.062]}>
         <planeGeometry args={[0.54, 0.72]} />
-        <meshBasicMaterial map={texture} />
+        <TextureMaterial
+          url={link.image}
+          fallbackColor={theme === 'light' ? '#f4f4f4' : '#080a0c'}
+        />
       </mesh>
       <Text
         font={sceneFont}
@@ -110,7 +113,6 @@ export function Monitor() {
   const open = linkClusterOpen && monitorOn;
   const lineColor = theme === 'light' ? '#000000' : '#f3f4f6';
   const blogCover = linksConfig.find((link) => link.id === 'blog')?.image ?? linksConfig[0]?.image;
-  const coverTexture = useTexture(blogCover ?? '/assets/images/links/blog.webp');
   const riserGlow =
     theme === 'dark' && lampOn
       ? {
@@ -156,7 +158,11 @@ export function Monitor() {
       {monitorOn ? (
         <mesh position={[0, 1.42, 0.068]}>
           <planeGeometry args={[2.05, 1.16]} />
-          <meshBasicMaterial map={coverTexture} toneMapped={false} />
+          <TextureMaterial
+            url={blogCover ?? '/assets/images/links/blog.webp'}
+            fallbackColor={theme === 'dark' ? '#080a0c' : '#f4f4f4'}
+            toneMapped={false}
+          />
         </mesh>
       ) : null}
       <LineBox
